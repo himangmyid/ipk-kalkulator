@@ -30,7 +30,7 @@ export const CourseTable: React.FC<CourseTableProps> = ({
   const creditOptions = [1, 2, 3, 4];
 
   return (
-    <div className="neo-box p-4">
+    <div className="neo-box p-4 space-y-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
           <button 
@@ -54,7 +54,7 @@ export const CourseTable: React.FC<CourseTableProps> = ({
         <>
           <div className="overflow-x-auto">
             <table className="w-full neo-table">
-              <thead>
+              <thead className="hidden md:table-header-group">
                 <tr>
                   <th className="px-4 py-2 text-left">Mata Kuliah</th>
                   <th className="px-4 py-2 text-center">SKS</th>
@@ -66,28 +66,25 @@ export const CourseTable: React.FC<CourseTableProps> = ({
               </thead>
               <tbody>
                 {semester.courses.map((course) => {
-                  // Grade point (skala 4-1)
                   const point = gradeToPoint(course.grade);
-                  
-                  // Total points (range 0-12 = credit * point)
                   const points = point * course.credits;
 
                   return (
-                    <tr key={course.id}>
-                      <td className="px-4 py-2">
+                    <tr key={course.id} className="block md:table-row mb-4 md:mb-0">
+                      <td className="block md:table-cell px-4 py-2">
                         <input
                           type="text"
                           value={course.name}
                           onChange={(e) => onUpdateCourse(semester.id, { ...course, name: e.target.value })}
-                          className="neo-input w-full md:min-w-[200px]"
+                          className="neo-input w-full text-sm md:text-base p-2 md:p-3"
                           placeholder="Nama Mata Kuliah"
                         />
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="block md:table-cell px-4 py-2">
                         <select
                           value={course.credits}
                           onChange={(e) => onUpdateCourse(semester.id, { ...course, credits: parseInt(e.target.value) })}
-                          className="neo-select w-full"
+                          className="neo-select w-full text-sm md:text-base p-2 md:p-3"
                         >
                           {creditOptions.map((credit) => (
                             <option key={credit} value={credit}>
@@ -96,11 +93,11 @@ export const CourseTable: React.FC<CourseTableProps> = ({
                           ))}
                         </select>
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="block md:table-cell px-4 py-2">
                         <select
                           value={course.grade}
                           onChange={(e) => onUpdateCourse(semester.id, { ...course, grade: e.target.value as GradeOption })}
-                          className="neo-select w-full"
+                          className="neo-select w-full text-sm md:text-base p-2 md:p-3"
                         >
                           {gradeOptions.map((grade) => (
                             <option key={grade} value={grade}>
@@ -109,13 +106,13 @@ export const CourseTable: React.FC<CourseTableProps> = ({
                           ))}
                         </select>
                       </td>
-                      <td className="px-4 py-2 text-center">
+                      <td className="block md:table-cell px-4 py-2 text-center">
                         {point.toFixed(1)}
                       </td>
-                      <td className="px-4 py-2 text-center">
+                      <td className="block md:table-cell px-4 py-2 text-center">
                         {points.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2 text-center">
+                      <td className="block md:table-cell px-4 py-2 text-center">
                         <button
                           onClick={() => onDeleteCourse(semester.id, course.id)}
                           className="neo-danger-button py-1 px-2 text-sm"

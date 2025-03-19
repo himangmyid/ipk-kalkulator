@@ -11,12 +11,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ darkMode, setDarkMode 
   return (
     <motion.button
       onClick={() => setDarkMode(!darkMode)}
-      className="neo-button py-2 px-4 flex items-center"
+      className="neo-button w-10 h-10 rounded-full flex items-center justify-center"
       aria-label="Toggle dark mode"
       whileTap={{ scale: 0.9 }} // Animasi saat tombol ditekan
       transition={{ type: 'spring', stiffness: 300 }} // Efek spring
     >
-      {darkMode ? '☀️' : '🌙'}
+      {darkMode ? '🌞' : '🌙'}
     </motion.button>
   );
 };

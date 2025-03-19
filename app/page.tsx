@@ -125,10 +125,20 @@ export default function Home() {
   return (
     <main className={`p-4 md:p-8 min-h-screen transition-colors ${darkMode ? 'dark:bg-gray-900 dark:text-white' : 'bg-white text-black'}`}>
       <div className="neo-container max-w-5xl mx-auto pb-20">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="neo-title text-2xl md:text-4xl font-bold">IPK Kalkulator</h1>
-          <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
-        </div>
+      <div className="flex justify-between items-center mb-6">
+  <h1 className="neo-title text-2xl md:text-4xl font-bold">IPK Kalkulator</h1>
+  <div className="flex items-center gap-4">
+    <a
+      href="https://trakteer.id/himang/tip"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="neo-button py-2 px-4 flex items-center text-sm md:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors dark:text-gray-900"
+    >
+      🎁 Donasi
+    </a>
+    <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+  </div>
+</div>
 
         <div className="neo-tabs mb-6">
           <Tab  
@@ -182,7 +192,7 @@ export default function Home() {
         </div>
       </div>
        {/* Footer */}
-       <footer className="text-center py-4 mt-10 border-t border-gray-200 dark:border-gray-700">
+      <footer className="text-center py-4 mt-10 border-t border-gray-200 dark:border-gray-700">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Dibuat dengan ❤️ oleh{' '}
           <a
