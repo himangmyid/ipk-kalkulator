@@ -1,26 +1,202 @@
 @import "tailwindcss";
 
+
+.animate-on-click:active {
+  transform: scale(0.9); 
+  transition: transform 0.1s ease; 
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  --highlight-color: #36C5F0;
+  --danger-color: #E01E5A;
+  --success-color: #2EB67D;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Neobrutalism Styles */
+.neo-container {
+  position: relative;
+  z-index: 1;
+}
+
+.neo-title {
+  position: relative;
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--highlight-color);
+  box-shadow: 4px 4px 0 var(--shadow-color);
+  margin-bottom: 1rem;
+  color: black;
+}
+
+.neo-subtitle {
+  position: relative;
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #ECE8FF;
+  box-shadow: 3px 3px 0 var(--shadow-color);
+  margin-bottom: 0.5rem;
+  color: black;
+}
+
+.neo-box {
+  background-color: var(--background);
+  border: 2px solid var(--foreground);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.dark .neo-box {
+  background-color: #2a2a2a;
+  border-color: #999;
+}
+
+.neo-button {
+  background-color: white;
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 var(--shadow-color);
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.neo-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--shadow-color);
+}
+
+.neo-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
+.dark .neo-button {
+  background-color: #2a2a2a;
+  border-color: #999;
+  color: white;
+}
+
+.neo-button-active {
+  background-color: black;
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 var(--shadow-color);
+  color: white;
+}
+
+.dark .neo-button-active {
+  background-color: #555;
+  border-color: #999;
+}
+
+.neo-danger-button {
+  background-color: var(--danger-color);
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 var(--shadow-color);
+  color: white;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.neo-danger-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--shadow-color);
+}
+
+.neo-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.neo-table th {
+  font-weight: bold;
+  border-bottom: 2px solid var(--foreground);
+  padding: 0.5rem;
+}
+
+.neo-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .neo-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neo-input, .neo-select {
+  border: 2px solid black;
+  padding: 0.5rem;
+  width: 100%;
+  background-color: white;
+  box-shadow: 2px 2px 0 var(--shadow-color);
+  transition: all 0.2s ease;
+}
+
+.dark .neo-input, .dark .neo-select {
+  background-color: #333;
+  border-color: #999;
+  color: white;
+}
+
+.neo-input:focus, .neo-select:focus {
+  outline: none;
+  border-color: var(--highlight-color);
+  box-shadow: 3px 3px 0 var(--highlight-color);
+}
+
+.neo-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.neo-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  background-color: white;
+  box-shadow: 2px 2px 0 var(--shadow-color);
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.dark .neo-icon-button {
+  background-color: #333;
+  border-color: #999;
+  color: white;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 640px) {
+  .neo-title {
+    font-size: 1.5rem;
+  }
+  
+  .neo-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 768px) {
+  .neo-table {
+    font-size: 0.875rem;
+  }
+}
+
+/* Animation for transitions */
+.transition-colors {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

@@ -1,103 +1,200 @@
-import Image from "next/image";
+// File: app/page.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { CourseTable } from './components/CourseTable';
+import { Summary } from './components/Summary';
+import { Charts } from './components/Charts';
+import { ThemeToggle } from './components/ThemeToggle';
+import { Semester, Course, gradeToPoint } from './types';
+import { Tab } from './components/Tab';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeTab, setActiveTab] = useState<'summary' | 'details'>('summary');
+  const [semesters, setSemesters] = useState<Semester[]>([
+    { id: 1, courses: [], isExpanded: true }
+  ]);
+  const [darkMode, setDarkMode] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Efek untuk mengatur tema
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  // Fungsi untuk menambah semester baru
+  const addSemester = () => {
+    const nextId = semesters.length > 0 ? Math.max(...semesters.map(s => s.id)) + 1 : 1;
+    setSemesters([...semesters, { id: nextId, courses: [], isExpanded: true }]);
+  };
+
+  // Fungsi untuk menghapus semester
+  const deleteSemester = (semesterId: number) => {
+    setSemesters(semesters.filter(semester => semester.id !== semesterId));
+  };
+
+  // Fungsi untuk toggle expand/collapse semester
+  const toggleSemesterExpand = (semesterId: number) => {
+    setSemesters(semesters.map(semester => 
+      semester.id === semesterId 
+        ? { ...semester, isExpanded: !semester.isExpanded } 
+        : semester
+    ));
+  };
+
+  // Fungsi untuk menambah mata kuliah
+  const addCourse = (semesterId: number) => {
+    setSemesters(semesters.map(semester => {
+      if (semester.id === semesterId) {
+        return {
+          ...semester,
+          courses: [...semester.courses, { 
+            id: new Date().getTime(), 
+            name: '', 
+            credits: 2, 
+            grade: 'A' 
+          }]
+        };
+      }
+      return semester;
+    }));
+  };
+
+  // Fungsi untuk memperbarui mata kuliah
+  const updateCourse = (semesterId: number, updatedCourse: Course) => {
+    setSemesters(semesters.map(semester => {
+      if (semester.id === semesterId) {
+        return {
+          ...semester,
+          courses: semester.courses.map(course => 
+            course.id === updatedCourse.id ? updatedCourse : course
+          )
+        };
+      }
+      return semester;
+    }));
+  };
+
+  // Fungsi untuk menghapus mata kuliah
+  const deleteCourse = (semesterId: number, courseId: number) => {
+    setSemesters(semesters.map(semester => {
+      if (semester.id === semesterId) {
+        return {
+          ...semester,
+          courses: semester.courses.filter(course => course.id !== courseId)
+        };
+      }
+      return semester;
+    }));
+  };
+
+  // Hitung data IPK untuk setiap semester
+  const semesterData = semesters.map(semester => {
+    const totalCredits = semester.courses.reduce((sum, course) => sum + course.credits, 0);
+    const totalPoints = semester.courses.reduce((sum, course) => {
+      const point = gradeToPoint(course.grade);
+      return sum + (point * course.credits);
+    }, 0);
+    const gpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+    
+    return {
+      id: semester.id,
+      totalCredits,
+      totalPoints,
+      gpa: parseFloat(gpa.toFixed(2))
+    };
+  });
+
+  // Hitung IPK kumulatif
+  const calculateCumulativeGPA = () => {
+    const allCourses = semesters.flatMap(semester => semester.courses);
+    const totalCredits = allCourses.reduce((sum, course) => sum + course.credits, 0);
+    const totalPoints = allCourses.reduce((sum, course) => {
+      const point = gradeToPoint(course.grade);
+      return sum + (point * course.credits);
+    }, 0);
+    
+    return totalCredits > 0 ? parseFloat((totalPoints / totalCredits).toFixed(2)) : 0;
+  };
+
+  const cumulativeGPA = calculateCumulativeGPA();
+
+  return (
+    <main className={`p-4 md:p-8 min-h-screen transition-colors ${darkMode ? 'dark:bg-gray-900 dark:text-white' : 'bg-white text-black'}`}>
+      <div className="neo-container max-w-5xl mx-auto pb-20">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="neo-title text-2xl md:text-4xl font-bold">IPK Kalkulator</h1>
+          <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <div className="neo-tabs mb-6">
+          <Tab  
+            isActive={activeTab === 'summary'} 
+            onClick={() => setActiveTab('summary')}
+            label="Ringkasan"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <Tab 
+            isActive={activeTab === 'details'} 
+            onClick={() => setActiveTab('details')}
+            label="Detail Mata Kuliah"
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+        </div>
+
+        {activeTab === 'summary' && (
+          <Summary 
+            semesterData={semesterData} 
+            cumulativeGPA={cumulativeGPA} 
           />
-          Go to nextjs.org →
-        </a>
+        )}
+
+        {activeTab === 'details' && (
+          <div className="space-y-8">
+            {semesters.map((semester) => (
+              <CourseTable
+                key={semester.id}
+                semester={semester}
+                onAddCourse={addCourse}
+                onUpdateCourse={updateCourse}
+                onDeleteCourse={deleteCourse}
+                onToggleExpand={toggleSemesterExpand}
+                onDeleteSemester={deleteSemester}
+              />
+            ))}
+            <button 
+              onClick={addSemester}
+              className="neo-button py-2 px-4 mt-4 w-full"
+            >
+              + Tambah Semester Baru
+            </button>
+          </div>
+        )}
+
+        <div className="mt-10">
+          <h2 className="neo-subtitle text-xl font-bold mb-4">Visualisasi IPK</h2>
+          <Charts 
+            semesterData={semesterData} 
+            cumulativeGPA={cumulativeGPA} 
+            darkMode={darkMode}
+          />
+        </div>
+      </div>
+       {/* Footer */}
+       <footer className="text-center py-4 mt-10 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Dibuat dengan ❤️ oleh{' '}
+          <a
+            href="http://s.id/himang"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            Himang
+          </a>
+        </p>
       </footer>
-    </div>
+    </main>
   );
 }
