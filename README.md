@@ -1,3 +1,7 @@
+# Calculate your GPA
+
+
+---
 <p align="center">
   <a href="https://github.com/himangmyid/ipk-kalkulator">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=himangmyid&repo=ipk-kalkulator&theme=tokyonight" alt="GitHub Repo Card">
